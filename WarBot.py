@@ -13,6 +13,7 @@ LIMIT_TWEETS=140 #Limite caracteres en un tweet
 
 print('This is my twitter warbot')
 # Estas claves se le piden a Twitter para poder funcionar el bot
+'''
 CONSUMER_KEY = 'F9VYQEIKfUZqs0i8DrBZRC9N6'
 CONSUMER_SECRET = 'TlMVkv0GEPQ3LgsbtINSbxYDCd7iQnUIO4zliBNwiQ93SNQnD8'
 ACCESS_KEY = '1271875353351421952-X8s83Hf5uiU8Bk3UkEDEN4zjwsLyxb'
@@ -23,6 +24,7 @@ ACCESS_SECRET = 'O3Xk3QTCPffZQ8XHLeZOxJf7dWED0wIDuNVquUMXjMaCb'
 auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
 auth.set_access_token(ACCESS_KEY, ACCESS_SECRET)
 api = tweepy.API(auth)
+'''
 # Clase que va a contener a cada jugador
 class Jugador:
   def __init__(self, name, frase, lifes):
@@ -75,7 +77,7 @@ def muertes():
     text= "¡Vamos a comenzar!, nuestros participantes son:\n"
     print(text)
 #    id_tweet= api.update_status(text).id_str
-    time.sleep(10)
+    time.sleep(1)
     text=""
     contador=0
     while contador < len(jugadores)-1:
@@ -101,6 +103,7 @@ def muertes():
     # Iniciamos el bucle que va a ejecutar el programa publicando los ataques
     while len(jugadores) > 1:
         suicidio=False
+        recuperar=False
         # Igualamos 'a' a 'b' para asegurarnos que despues no lo sean
         a = b = 0
         print (a, b)
@@ -109,6 +112,9 @@ def muertes():
             a = random.randint(0, len(jugadores) - 1)
             b = random.randint(0, len(jugadores) - 1)
             c = random.randint(0, 20)
+        #5% posibilidades de recuperar vida y no atacar
+        if c==20:
+            recuperar=True
         #5% de posibilidades de suicidarte
         if c==8:
             a=b
@@ -121,8 +127,12 @@ def muertes():
         print(atacante.name)
         print(atacado.name)
         print (a, b)
-        atacado.lifes-=1
-        vidas=atacado.lifes
+        vidas_old=atacado.lifes
+        if recuperar:
+            atacado.lifes+=1
+        else:
+            atacado.lifes-=1
+        vidas_new=atacado.lifes
         f = codecs.open("jugadores.txt", "r+", "utf-8")
         lineas=f.readlines()
         f.seek(0,0)
@@ -135,13 +145,19 @@ def muertes():
             else:
                 offset+=1
         print(lineas[b+offset])
-        lineas[b+offset] = lineas[b+offset].replace(str(vidas+1),str(vidas))
+        lineas[b+offset] = lineas[b+offset].replace(str(vidas_old),str(vidas_new))
         print(lineas)
         f.writelines(lineas)
         f.close
 
         # Si no tiene más vidas twiteamos mensaje de muerte
-        if vidas == 0:
+        if recuperar:
+            text= "¡MILAGRO! "+ atacado.name + " HA CONSEGUIDO UNA VIDA\nAhora tiene:" + str(atacado.lifes)
+            print(text)
+            time.sleep(0)
+            print ("1 seg para publicar\n")
+#            api.update_status("text")            
+        elif vidas_new == 0:
             muerte += 1; ataque += 1
             atacante.kills+=1
             if suicidio:
@@ -159,7 +175,7 @@ def muertes():
             jugadores.pop(atacado.name)
             names.pop(b)
             # Lo guardamos en el fichero para saber quienes ya murieron
-            f = open("muertos_test.txt", "a")
+            f = open("muertos.txt", "a")
             f.write(muertos[-1] + "\n")
             f.close()
         # Si tiene + vidas twiteamos mensaje de ataque
@@ -215,7 +231,7 @@ def muertes():
             text="vidas:\n"
             print(text)
 #            id_tweet= api.update_status(text).id_str
-            time.sleep(10)
+            time.sleep(1)
             text=""
             contador=0
             while contador < len(jugadores)-1:
