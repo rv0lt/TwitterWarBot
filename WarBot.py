@@ -76,28 +76,32 @@ def muertes():
     #Mensaje de bienvenida
     text= "¡Vamos a comenzar!, nuestros participantes son:\n"
     print(text)
-#    id_tweet= api.update_status(text).id_str
-    time.sleep(1)
+    id_tweet= api.update_status(text).id_str
+    time.sleep(10)
     text=""
     contador=0
     while contador < len(jugadores)-1:
         nombre=names[contador]
         if len(text) + len(nombre) > LIMIT_TWEETS:
             print(text + "\n")
-#            id_tweet = api.update_status(text, id_tweet) #reply al tweet anterior
+            time.sleep(10)
+            id_tweet = api.update_status(text, id_tweet).id_str #reply al tweet anterior
             text=""
         text+= nombre + ", "
         contador+=1
     nombre=names[contador]
     if len(text) + len(nombre) > LIMIT_TWEETS:
         print(text + "\n")
-#        id_tweet = api.update_status(text, id_tweet) #reply al tweet anterior
+        time.sleep(10)
+        id_tweet = api.update_status(text, id_tweet).id_str #reply al tweet anterior
         print(nombre)
-#        api.update_status(nombre, id_tweet)        
+        time.sleep(10)
+        api.update_status(nombre, id_tweet)        
     else:
         text+=nombre
         print(text + "\n")
-#        id_tweet = api.update_status(text, id_tweet) #reply al tweet anterior
+        time.sleep(10)
+        id_tweet = api.update_status(text, id_tweet) #reply al tweet anterior
 
  
     # Iniciamos el bucle que va a ejecutar el programa publicando los ataques
@@ -185,7 +189,7 @@ def muertes():
         else:
             ataque += 1
             if suicidio:
-                text=atacante.name + " se ha autolesionado y le quedan: " + str(atacado.lifes) + " vidas.\nQuedan " + str(len(jugadores)) + " supervivientes! #WarBot"
+                text=atacante.name + " se ha autolesionado y ha perdido una vida, le quedan: " + str(atacado.lifes) + " vidas.\nQuedan " + str(len(jugadores)) + " supervivientes! #WarBot"
             else:
                 text="Siendo el ataque numero: " + str(ataque) + "\n" + atacante.name + atacante.frase + " a " + atacado.name + "\n" + atacado.name + " tiene: " + str(atacado.lifes) + " vidas.\nQuedan " + str(len(jugadores)) + " supervivientes! #WarBot"
             print (text)
@@ -232,30 +236,34 @@ def muertes():
         #Cada 10 turnos recuerdo las vidas siempre que haya más de un jugador
         if contador_turno % 10 == 0 and len(jugadores)>1:
 
-            text="vidas:\n"
+            text="De momento a los participantes les quedan las siguientes vidas:\n"
             print(text)
-#            id_tweet= api.update_status(text).id_str
-            time.sleep(0)
+            id_tweet= api.update_status(text).id_str
+            time.sleep(10)
             text=""
             contador=0
             while contador < len(jugadores)-1:
                 nuevo = names[contador] + ":" + str (jugadores.get(names[contador]).lifes) + ", "
                 if len(text) + len(nuevo) > LIMIT_TWEETS:
                     print(text + "\n")
-#                    id_tweet = api.update_status(text, id_tweet).id_str #reply al tweet anterior
+                    time.sleep(10)
+                    id_tweet = api.update_status(text, id_tweet).id_str #reply al tweet anterior
                     text=""
                 text+= nuevo
                 contador+=1
             nuevo = names[contador] + ":" + str (jugadores.get(names[contador]).lifes) 
             if len(text) + len(nuevo) > LIMIT_TWEETS:
                 print(text + "\n")
-#                id_tweet = api.update_status(text, id_tweet).id_str #reply al tweet anterior
+                time.sleep(10)
+                id_tweet = api.update_status(text, id_tweet).id_str #reply al tweet anterior
                 print(nuevo)
-#                id_tweet = api.update_status(nuevo, id_tweet).id_str #reply al tweet anterior
+                time.sleep(10)
+                api.update_status(nuevo, id_tweet).id_str #reply al tweet anterior
             else:
                 text+=nuevo
                 print(text)
-#                id_tweet = api.update_status(text, id_tweet) #reply al tweet anterior                 
+                time.sleep(10)
+                api.update_status(text, id_tweet) #reply al tweet anterior                 
 
         # Si ya pasaron las 16 horas (de 9:00 AM a 24:00 PM) me duermo toda la noche
         if contador_turno % 16 == 0:
