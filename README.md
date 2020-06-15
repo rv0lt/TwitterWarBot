@@ -6,7 +6,7 @@ El fichero jugadores.txt contiene los jugadores que van a participar en el sigui
 
 `Nombre; frase con la que ataque; vidas iniciales`
 Ejemplo:
-`Aaron; le ha rajado en el poligino;3`
+`Aaron; le ha rajado en el poligono;3`
 
 Si el servidor se para la partida puede retomarse en el punto donde se paro.
 

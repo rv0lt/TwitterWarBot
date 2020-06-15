@@ -41,7 +41,7 @@ def muertes():
     '''
     El archivo jugadores debe contener en cada línea: Nombre; frase con la que ataque; vidas iniciales
     Ejemplo:
-    Aaron; le ha rajado en el poligino;3
+    Aaron; le ha rajado en el poligono;3
     '''
     f = codecs.open("jugadores.txt", "r", "utf-8")
     linea = f.readlines()
@@ -151,7 +151,7 @@ def muertes():
             print (text)
             time.sleep(0)
             print ("1 seg para publicar\n")
-            #api.update_status("text")
+#            api.update_status("text")
            
             # Lo añadimos al array de muertos
             muertos.append(atacado.name)
@@ -222,16 +222,16 @@ def muertes():
                 nuevo = names[contador] + ":" + str (jugadores.get(names[contador]).lifes) + ", "
                 if len(text) + len(nuevo) > LIMIT_TWEETS:
                     print(text + "\n")
-#                    id_tweet = api.update_status(text, id_tweet) #reply al tweet anterior
+#                    id_tweet = api.update_status(text, id_tweet).id_str #reply al tweet anterior
                     text=""
                 text+= nuevo
                 contador+=1
             nuevo = names[contador] + ":" + str (jugadores.get(names[contador]).lifes) 
             if len(text) + len(nuevo) > LIMIT_TWEETS:
                 print(text + "\n")
-#                id_tweet = api.update_status(text, id_tweet) #reply al tweet anterior
+#                id_tweet = api.update_status(text, id_tweet).id_str #reply al tweet anterior
                 print(nuevo)
-#                id_tweet = api.update_status(nuevo, id_tweet) #reply al tweet anterior
+#                id_tweet = api.update_status(nuevo, id_tweet).id_str #reply al tweet anterior
             else:
                 text+=nuevo
                 print(text)
