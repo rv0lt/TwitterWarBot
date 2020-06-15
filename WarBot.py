@@ -14,10 +14,10 @@ SLEEP_TIME=0 #Tiempo que duerme entre mensajes
 print('This is my twitter warbot')
 # Estas claves se le piden a Twitter para poder funcionar el bot
 
-CONSUMER_KEY = 'F9VYQEIKfUZqs0i8DrBZRC9N6'
-CONSUMER_SECRET = 'TlMVkv0GEPQ3LgsbtINSbxYDCd7iQnUIO4zliBNwiQ93SNQnD8'
-ACCESS_KEY = '1271875353351421952-X8s83Hf5uiU8Bk3UkEDEN4zjwsLyxb'
-ACCESS_SECRET = 'O3Xk3QTCPffZQ8XHLeZOxJf7dWED0wIDuNVquUMXjMaCb'
+CONSUMER_KEY = '--'
+CONSUMER_SECRET = '--'
+ACCESS_KEY = '--'
+ACCESS_SECRET = '--'
 
 
 # Linkeamos las claves a la api, para poder Twitear
@@ -46,7 +46,7 @@ def muertes():
     Ejemplo:
     Aaron; le ha rajado en el poligono;3
     '''
-    f = open("jugadores_test.txt", "r")
+    f = open("jugadores.txt", "r")
     linea = f.readlines()
     for jugador in linea:
         aux = jugador.split(";")
@@ -144,7 +144,7 @@ def muertes():
             else:
                 atacado.lifes-=1
             vidas_new=atacado.lifes
-            f = open("jugadores_test.txt", "r+")
+            f = open("jugadores.txt", "r+")
             lineas=f.readlines()
             f.seek(0,0)
             encontrado=False
