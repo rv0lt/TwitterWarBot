@@ -9,7 +9,7 @@ import random
 import codecs
 import sys
 LIMIT_TWEETS=140 #Limite caracteres en un tweet
-
+SLEEP_TIME=0 #Tiempo que duerme entre mensajes
 
 print('This is my twitter warbot')
 # Estas claves se le piden a Twitter para poder funcionar el bot
@@ -32,6 +32,7 @@ class Jugador:
     self.frase= frase
     self.lifes = lifes
     self.kills = 0
+    self.aliado=""
 
 # Función principal para ayudar a la moduladidad
 def muertes():
@@ -45,7 +46,7 @@ def muertes():
     Ejemplo:
     Aaron; le ha rajado en el poligono;3
     '''
-    f = codecs.open("jugadores.txt", "r", "utf-8")
+    f = open("jugadores_test.txt", "r")
     linea = f.readlines()
     for jugador in linea:
         aux = jugador.split(";")
@@ -76,43 +77,44 @@ def muertes():
     #Mensaje de bienvenida
     text= "¡Vamos a comenzar!, nuestros participantes son:\n"
     print(text)
-    id_tweet= api.update_status(text).id_str
-    time.sleep(10)
+#    id_tweet= api.update_status(text).id_str
+    time.sleep(SLEEP_TIME)
     text=""
     contador=0
     while contador < len(jugadores)-1:
         nombre=names[contador]
         if len(text) + len(nombre) > LIMIT_TWEETS:
             print(text + "\n")
-            time.sleep(10)
-            id_tweet = api.update_status(text, id_tweet).id_str #reply al tweet anterior
+            time.sleep(SLEEP_TIME)
+#            id_tweet = api.update_status(text, id_tweet).id_str #reply al tweet anterior
             text=""
         text+= nombre + ", "
         contador+=1
     nombre=names[contador]
     if len(text) + len(nombre) > LIMIT_TWEETS:
         print(text + "\n")
-        time.sleep(10)
-        id_tweet = api.update_status(text, id_tweet).id_str #reply al tweet anterior
+        time.sleep(SLEEP_TIME)
+#        id_tweet = api.update_status(text, id_tweet).id_str #reply al tweet anterior
         print(nombre)
         time.sleep(10)
-        api.update_status(nombre, id_tweet)        
+#        api.update_status(nombre, id_tweet)        
     else:
         text+=nombre
         print(text + "\n")
-        time.sleep(10)
-        id_tweet = api.update_status(text, id_tweet) #reply al tweet anterior
+        time.sleep(SLEEP_TIME)
+#        id_tweet = api.update_status(text, id_tweet) #reply al tweet anterior
 
  
     # Iniciamos el bucle que va a ejecutar el programa publicando los ataques
     while len(jugadores) > 1:
         suicidio=False
         recuperar=False
+        alianza=False
         # Igualamos 'a' a 'b' para asegurarnos que despues no lo sean
         a = b = 0
         print (a, b)
         # Calculamos los nuevos valores de 'a' y 'b'
-        while a == b:
+        while (a == b) or (jugadores.get(names[a]).aliado==jugadores.get(names[b]).name):
             a = random.randint(0, len(jugadores) - 1)
             b = random.randint(0, len(jugadores) - 1)
             c = random.randint(0, 20)
@@ -120,49 +122,68 @@ def muertes():
         if c==20:
             recuperar=True
         #5% de posibilidades de suicidarte
-        if c==8:
+        elif c==8:
             a=b
             suicidio=True
+        #5% de posibilidades de crear alianza en vez de atacar
+        elif c==10:
+            alianza=True
         foto="media/" + str(c) + ".jpg"
-        # Restamos una vida al jugador que va a ser atacado y guardamos en el fichero el nuevo valor
-        atacado = names[b]
-        atacado=jugadores.get(atacado)
-        atacante= names[a]
-        atacante=jugadores.get(atacante)
+        
+        atacado=jugadores.get(names[b])
+        atacante=jugadores.get(names[a])
         print(atacante.name)
         print(atacado.name)
         print (a, b)
-        vidas_old=atacado.lifes
-        if recuperar:
-            atacado.lifes+=1
-        else:
-            atacado.lifes-=1
-        vidas_new=atacado.lifes
-        f = codecs.open("jugadores.txt", "r+", "utf-8")
-        lineas=f.readlines()
-        f.seek(0,0)
-        encontrado=False
-        offset=0
-        while not encontrado:
-            nombre=lineas[b+offset].split(";")[0]
-            if(nombre==atacado.name):
-                encontrado=True
+        # Restamos una vida al jugador que va a ser atacado y guardamos en el fichero el nuevo valor
+        #Si van a ser aliados no modifico nada
+        if not alianza:
+            vidas_old=atacado.lifes
+            if recuperar:
+                atacado.lifes+=1
             else:
-                offset+=1
-        print(lineas[b+offset])
-        lineas[b+offset] = lineas[b+offset].replace(str(vidas_old),str(vidas_new))
-        print(lineas)
-        f.writelines(lineas)
-        f.close
-
-        # Si no tiene más vidas twiteamos mensaje de muerte
+                atacado.lifes-=1
+            vidas_new=atacado.lifes
+            f = open("jugadores_test.txt", "r+")
+            lineas=f.readlines()
+            f.seek(0,0)
+            encontrado=False
+            offset=0
+            while not encontrado:
+                nombre=lineas[b+offset].split(";")[0]
+                if(nombre==atacado.name):
+                    encontrado=True
+                else:
+                    offset+=1
+            lineas[b+offset] = lineas[b+offset].replace(str(vidas_old),str(vidas_new))
+            print("Aliado del atacante: " + atacante.aliado)
+            print("Aliado del atacado: " + atacado.aliado)
+            f.writelines(lineas)
+            f.close
+        #Si van a ser aliados rompen sus alianzas anteriores y se alian
+        else:
+            if atacado.aliado != "":
+                aliado_previo = atacado.aliado
+                jugadores.get(aliado_previo).aliado=""
+            if atacante.aliado != "":
+                aliado_previo = atacante.aliado
+                jugadores.get(aliado_previo).aliado=""
+            atacado.aliado=atacante.name
+            atacante.aliado=atacado.name
+        #Si recupera vida
         if recuperar:
             text= "¡MILAGRO! "+ atacado.name + " HA CONSEGUIDO UNA VIDA\nAhora tiene:" + str(atacado.lifes)
             print(text)
-            time.sleep(10)
+            time.sleep(SLEEP_TIME)
             print ("1 seg para publicar\n")
-            api.update_with_media(foto,text)
-#            api.update_status("text")            
+#            api.update_with_media(foto,text)  
+        #Si se forja una alianza
+        elif alianza:
+            text= atacante.name + " y " + atacado.name + " ahora son aliados (rompiendo previas alianzas que tuvieran)\nNo se van a atacar entre ellos hasta que sean los ultimos jugadores vivos"    
+            print(text)
+            time.sleep(SLEEP_TIME)
+#            api.update_with_media(foto,text)     
+        # Si no tiene más vidas twiteamos mensaje de muerte
         elif vidas_new == 0:
             muerte += 1; ataque += 1
             atacante.kills+=1
@@ -171,11 +192,13 @@ def muertes():
             else:
                 text= "Siendo la muerte numero: " + str(muerte) + " y el ataque numero: " + str(ataque)+ "\n" + atacante.name + atacante.frase +" a " + atacado.name + " matandole en el acto" + "\n" + atacante.name + " lleva " + str(atacante.kills) + " kill(s).\nQuedan " + str(len(jugadores) - 1) + " supervivientes! #WarBot"
             print (text)
-            time.sleep(10)
+            time.sleep(SLEEP_TIME)
             print ("1 seg para publicar\n")
-            api.update_with_media(foto,text)
-#            api.update_status("text")
+#            api.update_with_media(foto,text)
            
+            #Si estaba aliado con alguien se rompe la alianza
+            if atacado.aliado != "":
+                jugadores.get(atacado.aliado).aliado=""
             # Lo añadimos al array de muertos
             muertos.append(atacado.name)
             # Lo quitamos de los jugadores vivos
@@ -193,10 +216,9 @@ def muertes():
             else:
                 text="Siendo el ataque numero: " + str(ataque) + "\n" + atacante.name + atacante.frase + " a " + atacado.name + "\n" + atacado.name + " tiene: " + str(atacado.lifes) + " vidas.\nQuedan " + str(len(jugadores)) + " supervivientes! #WarBot"
             print (text)
-            time.sleep(10)
+            time.sleep(SLEEP_TIME)
             print ("1 seg para publicar\n")
-#            api.update_status(text)
-            api.update_with_media(foto,text)
+#            api.update_with_media(foto,text)
        
         # En caso de quedar 5 jugadores y ser la primera vez en la partida que ocurre se dice quienes quedan
         if len(jugadores) == 5 and flag == 0:
@@ -213,7 +235,11 @@ def muertes():
 #            api.update_status(text)
             print (text)
             flag += 1
-        # Se dice quien es el ganador y se le da la En Hora Buena a los dos siguientes clasificados
+        #Se rompen las alianzas que puedan haber
+        elif len(jugadores) == 2:
+            jugadores.get(names[0]).aliado=""
+            jugadores.get(names[1]).aliado=""
+        # Se dice quien es el ganador y se le da la Enhorabuena a los dos siguientes clasificados
         elif len(jugadores) == 1:
             text = "Tenemos un ganador!! El ganador es... " + names[0]
             print (text)
@@ -238,32 +264,32 @@ def muertes():
 
             text="De momento a los participantes les quedan las siguientes vidas:\n"
             print(text)
-            id_tweet= api.update_status(text).id_str
-            time.sleep(10)
+#            id_tweet= api.update_status(text).id_str
+            time.sleep(SLEEP_TIME)
             text=""
             contador=0
             while contador < len(jugadores)-1:
                 nuevo = names[contador] + ":" + str (jugadores.get(names[contador]).lifes) + ", "
                 if len(text) + len(nuevo) > LIMIT_TWEETS:
                     print(text + "\n")
-                    time.sleep(10)
-                    id_tweet = api.update_status(text, id_tweet).id_str #reply al tweet anterior
+                    time.sleep(SLEEP_TIME)
+#                    id_tweet = api.update_status(text, id_tweet).id_str #reply al tweet anterior
                     text=""
                 text+= nuevo
                 contador+=1
             nuevo = names[contador] + ":" + str (jugadores.get(names[contador]).lifes) 
             if len(text) + len(nuevo) > LIMIT_TWEETS:
                 print(text + "\n")
-                time.sleep(10)
-                id_tweet = api.update_status(text, id_tweet).id_str #reply al tweet anterior
+                time.sleep(SLEEP_TIME)
+#                id_tweet = api.update_status(text, id_tweet).id_str #reply al tweet anterior
                 print(nuevo)
-                time.sleep(10)
-                api.update_status(nuevo, id_tweet).id_str #reply al tweet anterior
+                time.sleep(SLEEP_TIME)
+#                api.update_status(nuevo, id_tweet).id_str #reply al tweet anterior
             else:
                 text+=nuevo
                 print(text)
-                time.sleep(10)
-                api.update_status(text, id_tweet) #reply al tweet anterior                 
+                time.sleep(SLEEP_TIME)
+#                api.update_status(text, id_tweet) #reply al tweet anterior                 
 
         # Si ya pasaron las 16 horas (de 9:00 AM a 24:00 PM) me duermo toda la noche
         if contador_turno % 16 == 0:
@@ -271,7 +297,7 @@ def muertes():
             #time.sleep(60*60*8)
 
         #Tiempo que pasa entre ataques
-        time.sleep(10*1)
+        time.sleep(0*1)
 
         contador_turno += 1
         print (contador_turno)
