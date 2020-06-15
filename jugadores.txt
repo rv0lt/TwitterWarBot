@@ -1,6 +1,6 @@
-Aaron; le ha rajado en el poligono;3
-Max; le ha hackeado;3
 Alvaro; le ha leido los estatutos de DA;3
+Aaron; le ha rajado en el poliderportivo;3
+Max; le ha hackeado;3
 Trompa; le ha dicho buenos días;3
 Alex; le ha mirado con asco;3
 Andrea; le ha leido la biblia;3

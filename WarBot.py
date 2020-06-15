@@ -13,7 +13,7 @@ LIMIT_TWEETS=140 #Limite caracteres en un tweet
 
 print('This is my twitter warbot')
 # Estas claves se le piden a Twitter para poder funcionar el bot
-'''
+
 CONSUMER_KEY = 'F9VYQEIKfUZqs0i8DrBZRC9N6'
 CONSUMER_SECRET = 'TlMVkv0GEPQ3LgsbtINSbxYDCd7iQnUIO4zliBNwiQ93SNQnD8'
 ACCESS_KEY = '1271875353351421952-X8s83Hf5uiU8Bk3UkEDEN4zjwsLyxb'
@@ -24,7 +24,7 @@ ACCESS_SECRET = 'O3Xk3QTCPffZQ8XHLeZOxJf7dWED0wIDuNVquUMXjMaCb'
 auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
 auth.set_access_token(ACCESS_KEY, ACCESS_SECRET)
 api = tweepy.API(auth)
-'''
+
 # Clase que va a contener a cada jugador
 class Jugador:
   def __init__(self, name, frase, lifes):
@@ -119,6 +119,7 @@ def muertes():
         if c==8:
             a=b
             suicidio=True
+        foto="media/" + str(c) + ".jpg"
         # Restamos una vida al jugador que va a ser atacado y guardamos en el fichero el nuevo valor
         atacado = names[b]
         atacado=jugadores.get(atacado)
@@ -154,8 +155,9 @@ def muertes():
         if recuperar:
             text= "¡MILAGRO! "+ atacado.name + " HA CONSEGUIDO UNA VIDA\nAhora tiene:" + str(atacado.lifes)
             print(text)
-            time.sleep(0)
+            time.sleep(10)
             print ("1 seg para publicar\n")
+            api.update_with_media(foto,text)
 #            api.update_status("text")            
         elif vidas_new == 0:
             muerte += 1; ataque += 1
@@ -165,8 +167,9 @@ def muertes():
             else:
                 text= "Siendo la muerte numero: " + str(muerte) + " y el ataque numero: " + str(ataque)+ "\n" + atacante.name + atacante.frase +" a " + atacado.name + " matandole en el acto" + "\n" + atacante.name + " lleva " + str(atacante.kills) + " kill(s).\nQuedan " + str(len(jugadores) - 1) + " supervivientes! #WarBot"
             print (text)
-            time.sleep(0)
+            time.sleep(10)
             print ("1 seg para publicar\n")
+            api.update_with_media(foto,text)
 #            api.update_status("text")
            
             # Lo añadimos al array de muertos
@@ -186,9 +189,10 @@ def muertes():
             else:
                 text="Siendo el ataque numero: " + str(ataque) + "\n" + atacante.name + atacante.frase + " a " + atacado.name + "\n" + atacado.name + " tiene: " + str(atacado.lifes) + " vidas.\nQuedan " + str(len(jugadores)) + " supervivientes! #WarBot"
             print (text)
-            time.sleep(0)
+            time.sleep(10)
             print ("1 seg para publicar\n")
 #            api.update_status(text)
+            api.update_with_media(foto,text)
        
         # En caso de quedar 5 jugadores y ser la primera vez en la partida que ocurre se dice quienes quedan
         if len(jugadores) == 5 and flag == 0:
@@ -231,7 +235,7 @@ def muertes():
             text="vidas:\n"
             print(text)
 #            id_tweet= api.update_status(text).id_str
-            time.sleep(1)
+            time.sleep(0)
             text=""
             contador=0
             while contador < len(jugadores)-1:
@@ -259,7 +263,7 @@ def muertes():
             #time.sleep(60*60*8)
 
         #Tiempo que pasa entre ataques
-        time.sleep(0.5*1)
+        time.sleep(10*1)
 
         contador_turno += 1
         print (contador_turno)
