@@ -16,11 +16,12 @@ Una vez acabada la partida, los ficheros se reincian con el script reinicio.sh
 
 ### Reglas del juego
 
-1. Todo jugador comienza con un numero de vidas
-2. Cada hora se produce un evento que puede ser ataque (85%), Suicidio(5%), Recuperacion(5%) y Alianza (5%)
-3. Cada 10 turnos recuerda las vidas de los jugadores vivos
-4. Durante las horas de noche (24PM a 9AM) el bot "duerme"
-5. El juego solo acaba cuando quede un jugador
+1. Todo jugador comienza con un numero igual de vidas
+2. Cada cierto tiempo se produce un evento que puede ser ataque (85%), Suicidio(5%), Recuperacion(5%) y Alianza (5%)
+3. Cada 15 turnos recuerda las vidas de los jugadores vivos
+4. Durante las horas de noche (1AM a 9AM) el bot "duerme"
+5. Los 10 primeros eventos se hacen cada media hora, a partir de ahí cada hora. Cuando queden 4 jugadores o menos vuelven a ser cada media hora 
+6. El juego solo acaba cuando quede un jugador
 
 ### Eventos
 

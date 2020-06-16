@@ -5,9 +5,9 @@
 
 import tweepy
 import time
+from datetime import datetime
 import random
 import codecs
-import sys
 LIMIT_TWEETS=140 #Limite caracteres en un tweet
 SLEEP_TIME=0 #Tiempo que duerme entre mensajes
 
@@ -16,7 +16,7 @@ print('This is my twitter warbot')
 
 CONSUMER_KEY = '--'
 CONSUMER_SECRET = '--'
-ACCESS_KEY = '--'
+ACCESS_KEY = '-----'
 ACCESS_SECRET = '--'
 
 
@@ -77,7 +77,7 @@ def muertes():
     #Mensaje de bienvenida
     text= "¡Vamos a comenzar!, nuestros participantes son:\n"
     print(text)
-#    id_tweet= api.update_status(text).id_str
+    id_tweet= api.update_status(text).id_str
     time.sleep(SLEEP_TIME)
     text=""
     contador=0
@@ -86,7 +86,7 @@ def muertes():
         if len(text) + len(nombre) > LIMIT_TWEETS:
             print(text + "\n")
             time.sleep(SLEEP_TIME)
-#            id_tweet = api.update_status(text, id_tweet).id_str #reply al tweet anterior
+            id_tweet = api.update_status(text, id_tweet).id_str #reply al tweet anterior
             text=""
         text+= nombre + ", "
         contador+=1
@@ -94,15 +94,15 @@ def muertes():
     if len(text) + len(nombre) > LIMIT_TWEETS:
         print(text + "\n")
         time.sleep(SLEEP_TIME)
-#        id_tweet = api.update_status(text, id_tweet).id_str #reply al tweet anterior
+        id_tweet = api.update_status(text, id_tweet).id_str #reply al tweet anterior
         print(nombre)
         time.sleep(10)
-#        api.update_status(nombre, id_tweet)        
+        api.update_status(nombre, id_tweet)        
     else:
         text+=nombre
         print(text + "\n")
         time.sleep(SLEEP_TIME)
-#        id_tweet = api.update_status(text, id_tweet) #reply al tweet anterior
+        id_tweet = api.update_status(text, id_tweet) #reply al tweet anterior
 
  
     # Iniciamos el bucle que va a ejecutar el programa publicando los ataques
@@ -176,13 +176,13 @@ def muertes():
             print(text)
             time.sleep(SLEEP_TIME)
             print ("1 seg para publicar\n")
-#            api.update_with_media(foto,text)  
+            api.update_with_media(foto,text)  
         #Si se forja una alianza
         elif alianza:
             text= atacante.name + " y " + atacado.name + " ahora son aliados (rompiendo previas alianzas que tuvieran)\nNo se van a atacar entre ellos hasta que sean los ultimos jugadores vivos"    
             print(text)
             time.sleep(SLEEP_TIME)
-#            api.update_with_media(foto,text)     
+            api.update_with_media(foto,text)     
         # Si no tiene más vidas twiteamos mensaje de muerte
         elif vidas_new == 0:
             muerte += 1; ataque += 1
@@ -194,7 +194,7 @@ def muertes():
             print (text)
             time.sleep(SLEEP_TIME)
             print ("1 seg para publicar\n")
-#            api.update_with_media(foto,text)
+            api.update_with_media(foto,text)
            
             #Si estaba aliado con alguien se rompe la alianza
             if atacado.aliado != "":
@@ -218,12 +218,12 @@ def muertes():
             print (text)
             time.sleep(SLEEP_TIME)
             print ("1 seg para publicar\n")
-#            api.update_with_media(foto,text)
+            api.update_with_media(foto,text)
        
         # En caso de quedar 5 jugadores y ser la primera vez en la partida que ocurre se dice quienes quedan
         if len(jugadores) == 5 and flag == 0:
             text="Quedan cinco supervivientes, atentos!!\nSuerte a: " + names[0] + ", " + names[1] + ", " + names[2] + ", " + names[3] + ", " + names[4]
-#            api.update_status(text)
+            api.update_status(text)
             print (text)
             flag += 1
         # Si ya se redujo el número de participantes se reinicia 'j' para cuando queden tres
@@ -232,7 +232,7 @@ def muertes():
         # Si quedan tres participantes y es la primera vez que ocurre se dice quieres quedan
         elif len(jugadores) == 3 and flag == 0:
             text="Quedan tres supervivientes, atentos!!\nSuerte a: " + names[0] + ", " + names[1] + ", " + names[2]
-#            api.update_status(text)
+            api.update_status(text)
             print (text)
             flag += 1
         #Se rompen las alianzas que puedan haber
@@ -243,10 +243,10 @@ def muertes():
         elif len(jugadores) == 1:
             text = "Tenemos un ganador!! El ganador es... " + names[0]
             print (text)
-#            api.update_status(text)
+            api.update_status(text)
             text="Enhorabuena por el top 3 a: " + muertos[-1] + ", " + muertos[-2] + "\nMuchas gracias a todas y a todos por participar!!"
             print (text)
-#            api.update_status(text)
+            api.update_status(text)
         '''
         Se guardan las variables en el fichero 'contador.txt' para
         restablecer la partida en el punto actual
@@ -260,11 +260,11 @@ def muertes():
         f.write(str(muerte) + "\n")
         f.close()
         #Cada 10 turnos recuerdo las vidas siempre que haya más de un jugador
-        if contador_turno % 10 == 0 and len(jugadores)>1:
+        if contador_turno % 15 == 0 and len(jugadores)>1:
 
             text="De momento a los participantes les quedan las siguientes vidas:\n"
             print(text)
-#            id_tweet= api.update_status(text).id_str
+            id_tweet= api.update_status(text).id_str
             time.sleep(SLEEP_TIME)
             text=""
             contador=0
@@ -273,7 +273,7 @@ def muertes():
                 if len(text) + len(nuevo) > LIMIT_TWEETS:
                     print(text + "\n")
                     time.sleep(SLEEP_TIME)
-#                    id_tweet = api.update_status(text, id_tweet).id_str #reply al tweet anterior
+                    id_tweet = api.update_status(text, id_tweet).id_str #reply al tweet anterior
                     text=""
                 text+= nuevo
                 contador+=1
@@ -281,23 +281,27 @@ def muertes():
             if len(text) + len(nuevo) > LIMIT_TWEETS:
                 print(text + "\n")
                 time.sleep(SLEEP_TIME)
-#                id_tweet = api.update_status(text, id_tweet).id_str #reply al tweet anterior
+                id_tweet = api.update_status(text, id_tweet).id_str #reply al tweet anterior
                 print(nuevo)
                 time.sleep(SLEEP_TIME)
-#                api.update_status(nuevo, id_tweet).id_str #reply al tweet anterior
+                api.update_status(nuevo, id_tweet).id_str #reply al tweet anterior
             else:
                 text+=nuevo
                 print(text)
                 time.sleep(SLEEP_TIME)
-#                api.update_status(text, id_tweet) #reply al tweet anterior                 
+                api.update_status(text, id_tweet) #reply al tweet anterior                 
 
         # Si ya pasaron las 16 horas (de 9:00 AM a 24:00 PM) me duermo toda la noche
-        if contador_turno % 16 == 0:
+        if datetime.now().hour == 1:
+            
             print ("Descansito ")
-            #time.sleep(60*60*8)
+            time.sleep(60*60*6)
 
         #Tiempo que pasa entre ataques
-        time.sleep(0*1)
+        if contador_turno <= 10 or len(jugadores) <= 4:
+            time.sleep(60*30)
+        else:
+            time.sleep(60*1)
 
         contador_turno += 1
         print (contador_turno)
