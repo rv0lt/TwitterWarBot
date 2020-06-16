@@ -9,7 +9,7 @@ from datetime import datetime
 import random
 import codecs
 LIMIT_TWEETS=140 #Limite caracteres en un tweet
-SLEEP_TIME=0 #Tiempo que duerme entre mensajes
+SLEEP_TIME=30 #Tiempo que duerme entre mensajes
 
 print('This is my twitter warbot')
 # Estas claves se le piden a Twitter para poder funcionar el bot
@@ -96,7 +96,7 @@ def muertes():
         time.sleep(SLEEP_TIME)
         id_tweet = api.update_status(text, id_tweet).id_str #reply al tweet anterior
         print(nombre)
-        time.sleep(10)
+        time.sleep(SLEEP_TIME)
         api.update_status(nombre, id_tweet)        
     else:
         text+=nombre
@@ -128,8 +128,8 @@ def muertes():
         #5% de posibilidades de crear alianza en vez de atacar
         elif c==10:
             alianza=True
+
         foto="media/" + str(c) + ".jpg"
-        
         atacado=jugadores.get(names[b])
         atacante=jugadores.get(names[a])
         print(atacante.name)
@@ -226,7 +226,7 @@ def muertes():
             api.update_status(text)
             print (text)
             flag += 1
-        # Si ya se redujo el número de participantes se reinicia 'j' para cuando queden tres
+        # Si ya se redujo el número de participantes se reinicia flag para cuando queden tres
         elif len(jugadores) == 4:
             flag = 0
         # Si quedan tres participantes y es la primera vez que ocurre se dice quieres quedan
@@ -259,7 +259,7 @@ def muertes():
         f.write(str(ataque) + "\n")
         f.write(str(muerte) + "\n")
         f.close()
-        #Cada 10 turnos recuerdo las vidas siempre que haya más de un jugador
+        #Cada 15 turnos recuerdo las vidas siempre que haya más de un jugador
         if contador_turno % 15 == 0 and len(jugadores)>1:
 
             text="De momento a los participantes les quedan las siguientes vidas:\n"
@@ -291,7 +291,7 @@ def muertes():
                 time.sleep(SLEEP_TIME)
                 api.update_status(text, id_tweet) #reply al tweet anterior                 
 
-        # Si ya pasaron las 16 horas (de 9:00 AM a 24:00 PM) me duermo toda la noche
+        # Si ya pasaron las horas me duermo 
         if datetime.now().hour == 1:
             
             print ("Descansito ")
@@ -301,7 +301,7 @@ def muertes():
         if contador_turno <= 10 or len(jugadores) <= 4:
             time.sleep(60*30)
         else:
-            time.sleep(60*1)
+            time.sleep(60*60)
 
         contador_turno += 1
         print (contador_turno)
